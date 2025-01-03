@@ -1,29 +1,58 @@
+import os
+from dotenv import load_dotenv
 import openai
 from prototype import MaleInsurance, FemaleInsurance
-openai.api_key = "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"
+
+# Load environment variables from the .env file
+load_dotenv()
+
+# Get the API key securely from the .env file
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 class InsuranceFacade:
     def __init__(self):
         self.male_insurance = MaleInsurance()
         self.female_insurance = FemaleInsurance()
 
     def get_insurance_template(self, gender):
-        if gender.lower() == "male":
+        """
+        Fetches the appropriate insurance template based on the gender.
+        """
+        gender = gender.lower()
+        if gender == "male":
             return self.male_insurance.clone()
-        elif gender.lower() == "female":
+        elif gender == "female":
             return self.female_insurance.clone()
         else:
-            raise ValueError("Please select 'Male' or 'Female' only.")
-    
+            raise ValueError("Invalid gender. Please select 'Male' or 'Female' only.")
+
     def customize_insurance(self, insurance, user_data):
-        # Fetch recommendation via GPT-API
-        response = openai.Completion.create(
-            engine = "gpt-4o-mini",
-            prompt=f"Given the following user details, suggest additional coverage and premium customization: {user_data}",
-            max_tokens=100,
-        )
-        recommendation = response.choices[0].text.strip()
+        """
+        Customizes the insurance template based on user data using GPT API.
+        """
+        try:
+            # Construct user prompt for the GPT model
+            user_prompt = (
+                f"You are a health insurance adviser. "
+                f"Given the following user details, suggest a detailed health coverage plan and premium customization: {user_data}"
+            )
 
-        insurance.base_coverage.append(recommendation)
-        insurance.base_premium += 200
+            # API call to OpenAI
+            response = openai.ChatCompletion.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": user_prompt}],
+                max_tokens=500,
+                temperature=0.7,
+            )
 
-        return insurance
+            # Extracting and processing recommendations
+            recommendation = response["choices"][0]["message"]["content"].strip()
+            insurance.base_coverage.append(recommendation)
+            insurance.base_premium += 200  # Example of adding a flat fee for customization
+
+            return insurance
+
+        except openai.error.OpenAIError as e:
+            raise RuntimeError(f"OpenAI API error: {e}")
+        except Exception as e:
+            raise RuntimeError(f"An unexpected error occurred: {e}")

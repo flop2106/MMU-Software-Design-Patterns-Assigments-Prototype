@@ -1,8 +1,8 @@
 import copy
 
 class HealthInsurancePrototype:
-    def __init__(self, base_coverage, base_premium):
-        self.base_coverage = base_coverage
+    def __init__(self, base_coverage = None, base_premium=0.0):
+        self.base_coverage = base_coverage or []
         self.base_premium = base_premium
     
     def clone(self):
