@@ -33,15 +33,15 @@ class InsuranceFacade:
         try:
             # Construct user prompt for the GPT model
             user_prompt = (
-                f"You are a health insurance adviser. "
-                f"Given the following user details, suggest a detailed health coverage plan and premium customization: {user_data}"
+                f"You are a preventive dental care adviser. "
+                f"Given the following user details, suggest a detailed dental care plan and premium customization: {user_data}"
             )
 
             # API call to OpenAI
             response = openai.ChatCompletion.create(
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": user_prompt}],
-                max_tokens=500,
+                #max_tokens=1028,
                 temperature=0.7,
             )
 
