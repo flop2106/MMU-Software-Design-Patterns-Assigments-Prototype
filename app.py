@@ -1,11 +1,11 @@
 import streamlit as st
 from prototype import *
-from facade import InsuranceFacade
-from state_design import InsuranceContext
+from facade import DentalCareFacade
+from state_design import DentalContext
 
 # Initialize session state
 if "context" not in st.session_state:
-    st.session_state.context = InsuranceContext()
+    st.session_state.context = DentalContext()
 
 # Main Function
 def main():

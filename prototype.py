@@ -1,6 +1,6 @@
 import copy
 
-class HealthInsurancePrototype:
+class DentalCarePrototype:
     def __init__(self, base_coverage=None, base_premium=0.0):
         self.base_coverage = base_coverage or []
         self.base_premium = base_premium
@@ -9,11 +9,11 @@ class HealthInsurancePrototype:
         return copy.deepcopy(self)
 
     def __str__(self):
-        result = f"Dental Care Total Base Premium: ${self.base_premium:.2f},\\n Coverage: {self.base_coverage}"
+        result = f"Coverage: {self.base_coverage}"
         return result
 
 
-class MaleInsurance(HealthInsurancePrototype):
+class MaleDentalCare(DentalCarePrototype):
     def __init__(self):
         super().__init__(
             [
@@ -26,7 +26,7 @@ class MaleInsurance(HealthInsurancePrototype):
         )
 
 
-class FemaleInsurance(HealthInsurancePrototype):
+class FemaleDentalCare(DentalCarePrototype):
     def __init__(self):
         super().__init__(
             [

@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import openai
-from prototype import MaleInsurance, FemaleInsurance
+from prototype import MaleDentalCare, FemaleDentalCare
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -9,24 +9,24 @@ load_dotenv()
 # Get the API key securely from the .env file
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-class InsuranceFacade:
+class DentalCareFacade:
     def __init__(self):
-        self.male_insurance = MaleInsurance()
-        self.female_insurance = FemaleInsurance()
+        self.male_dental = MaleDentalCare()
+        self.female_dental = FemaleDentalCare()
 
-    def get_insurance_template(self, gender):
+    def get_dental_template(self, gender):
         """
         Fetches the appropriate insurance template based on the gender.
         """
         gender = gender.lower()
         if gender == "male":
-            return self.male_insurance.clone()
+            return self.male_dental.clone()
         elif gender == "female":
-            return self.female_insurance.clone()
+            return self.female_dental.clone()
         else:
             raise ValueError("Invalid gender. Please select 'Male' or 'Female' only.")
 
-    def customize_insurance(self, insurance, user_data):
+    def customize_dental_care(self, dental_plan, user_data):
         """
         Customizes the insurance template based on user data using GPT API.
         """
@@ -47,10 +47,10 @@ class InsuranceFacade:
 
             # Extracting and processing recommendations
             recommendation = response["choices"][0]["message"]["content"].strip()
-            insurance.base_coverage.append(recommendation)
-            insurance.base_premium += 200  # Example of adding a flat fee for customization
+            dental_plan.base_coverage.append(recommendation)
+            dental_plan.base_premium += 200  # Example of adding a flat fee for customization
 
-            return insurance
+            return dental_plan
 
         except openai.error.OpenAIError as e:
             raise RuntimeError(f"OpenAI API error: {e}")

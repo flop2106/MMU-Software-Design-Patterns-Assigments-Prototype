@@ -1,14 +1,14 @@
 import logging
-from facade import InsuranceFacade
+from facade import DentalCareFacade
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-class InsuranceState:
+class DentalState:
     def handle_request(self, context):
         raise NotImplementedError("Handle request must be implemented")
 
-class IdleState(InsuranceState):
+class IdleState(DentalState):
     def handle_request(self, context):
         logging.info("System is idle. Waiting for user input...")
         if not context.user_data:
@@ -16,7 +16,7 @@ class IdleState(InsuranceState):
             return
         context.transition_to(ProcessingState())
 
-class ProcessingState(InsuranceState):
+class ProcessingState(DentalState):
     def handle_request(self, context):
         try:
             logging.info("Processing user input and customizing insurance plan...")
@@ -28,32 +28,32 @@ class ProcessingState(InsuranceState):
                 context.transition_to(IdleState())
                 return
 
-            # Generate and customize insurance plan
-            insurance = context.facade.get_insurance_template(user_data["gender"])
-            customized_plan = context.facade.customize_insurance(insurance, user_data)
+            # Generate and customize dental care plan
+            dental_care = context.facade.get_dental_template(user_data["gender"])
+            customized_plan = context.facade.customize_dental_care(dental_care, user_data)
             context.result = customized_plan
 
-            logging.info("Insurance plan successfully customized.")
+            logging.info("Dental Care plan successfully customized.")
             context.transition_to(CompletedState())
         except Exception as e:
             logging.error(f"Error during processing: {e}")
             context.transition_to(IdleState())
 
-class CompletedState(InsuranceState):
+class CompletedState(DentalState):
     def handle_request(self, context):
         if context.result:
-            logging.info("Processing complete. Delivering the insurance plan...")
+            logging.info("Processing complete. Delivering the Dental Care plan...")
             logging.info(f"Result: {context.result}")
         else:
             logging.warning("No result found. Transitioning to IdleState.")
         context.transition_to(IdleState())
 
-class InsuranceContext:
+class DentalContext:
     def __init__(self):
         self.state = IdleState()
         self.user_data = None
         self.result = None
-        self.facade = InsuranceFacade()
+        self.facade = DentalCareFacade()
 
     def set_user_data(self, data):
         self.user_data = data
